@@ -6,7 +6,8 @@ let user = null, filter = { category: '', mode: '', q: '' }, current = null, aut
 gsap.registerPlugin(ScrollTrigger, Draggable);
 
 async function api(url, opts = {}) {
-  const r = await fetch('/api' + url, { headers: { 'Content-Type': 'application/json' }, ...opts, body: opts.body && JSON.stringify(opts.body) });
+  const isF = opts.body instanceof FormData;
+  const r = await fetch('/api' + url, { headers: isF ? {} : { 'Content-Type': 'application/json' }, ...opts, body: isF ? opts.body : opts.body && JSON.stringify(opts.body) });
   const d = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(d.error || 'Request failed');
   return d;
@@ -68,16 +69,22 @@ $$('#listMode button').forEach(b => b.onclick = () => {
   $('#priceL').textContent = listMode === 'rent' ? 'Price per day (₹)' : 'Selling price (₹)';
 });
 $('#listF').onsubmit = async e => {
-  e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); f.mode = listMode;
-  try { await api('/items', { method: 'POST', body: f }); closeM($('#listM')); e.target.reset(); toast('Your item is live'); confetti(innerWidth / 2, innerHeight / 2); loadItems(); }
+  e.preventDefault(); const f = new FormData(e.target); f.set('mode', listMode);
+  const img = f.get('image'); if (img && img.size > 3 * 1024 * 1024) return ($('#listE').textContent = 'Image must be under 3 MB');
+  try { await api('/items', { method: 'POST', body: f }); closeM($('#listM')); e.target.reset(); $('#prev').hidden = true; toast('Your item is live'); confetti(innerWidth / 2, innerHeight / 2); loadItems(); }
   catch (err) { $('#listE').textContent = err.message; }
+};
+
+$('#listF [name=image]').onchange = e => {
+  const f = e.target.files[0], p = $('#prev'); if (!f) return (p.hidden = true);
+  p.src = URL.createObjectURL(f); p.hidden = false; gsap.fromTo(p, { scale: .8, opacity: 0 }, { scale: 1, opacity: 1, duration: .4, ease: 'back.out(2)' });
 };
 
 /* ---------- browse ---------- */
 async function loadItems() {
   const qs = new URLSearchParams(Object.entries(filter).filter(([, v]) => v));
   const items = await api('/items?' + qs);
-  $('#grid').innerHTML = items.length ? items.map(i => `<article class="card"><div class="tile ${i.category}"><em class="${i.mode}">${i.mode === 'rent' ? 'For rent' : 'For sale'}</em><span>${ICON[i.category]}</span></div>
+  $('#grid').innerHTML = items.length ? items.map(i => `<article class="card"><div class="tile ${i.category}"><em class="${i.mode}">${i.mode === 'rent' ? 'For rent' : 'For sale'}</em>${i.has_image ? `<img src="/api/items/${i.id}/image" alt="${esc(i.title)}" loading="lazy">` : `<span>${ICON[i.category]}</span>`}</div>
     <div class="info"><h3>${esc(i.title)}</h3><small>${esc(i.description)}</small><small>by ${esc(i.owner)}</small>
     <div class="buy"><b>${inr(i.price)}${i.mode === 'rent' ? '<small>/day</small>' : ''}</b><button class="btn primary sm magnetic" data-id="${i.id}">${i.mode === 'rent' ? 'Rent' : 'Buy'}</button></div></div></article>`).join('')
     : '<div class="empty">Nothing matches yet. Try another filter, or list the first one.</div>';

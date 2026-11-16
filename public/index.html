@@ -50,6 +50,7 @@
 <div class="modal" id="listM" hidden><div class="sheet"><button class="x" data-close>×</button><h3>List an item</h3>
   <form id="listF"><label>Title<input name="title" required maxlength="80"></label>
   <label>Details<textarea name="description" rows="2" maxlength="200"></textarea></label>
+  <label>Photo <small>(JPG, PNG or WebP, up to 3 MB)</small><input name="image" type="file" accept="image/jpeg,image/png,image/webp"></label><img id="prev" alt="Photo preview" hidden>
   <label>Category<select name="category"><option value="clothes">Clothes</option><option value="shoes">Shoes</option><option value="accessories">Accessories</option><option value="jewellery">Jewellery</option></select></label>
   <div class="seg" id="listMode"><button type="button" class="on" data-v="rent">Rent out</button><button type="button" data-v="sell">Sell</button></div>
   <label><span id="priceL">Price per day (₹)</span><input name="price" type="number" min="1" required></label>

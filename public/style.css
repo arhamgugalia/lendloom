@@ -33,6 +33,7 @@ input,select,textarea{width:100%;border:2px solid var(--lav);border-radius:14px;
 .tile{height:190px;display:grid;place-items:center;font-size:4.6rem;position:relative}
 .tile.clothes{background:linear-gradient(135deg,var(--lav),#cfd8ff)}.tile.shoes{background:linear-gradient(135deg,#cfd8ff,var(--lav))}.tile.accessories{background:linear-gradient(135deg,#FFE3D0,var(--peach))}.tile.jewellery{background:linear-gradient(135deg,var(--lav),#FFE3D0)}
 .tile em{position:absolute;top:12px;left:12px;font-style:normal;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:99px;background:#fff}.tile em.rent{color:var(--blue)}.tile em.sell{color:var(--peach2)}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.tile em{z-index:1}#prev{width:100%;height:150px;object-fit:cover;border-radius:14px}
 .tile span{display:inline-block}.card:hover .tile span{animation:wob .6s}@keyframes wob{30%{transform:rotate(-12deg) scale(1.15)}60%{transform:rotate(9deg) scale(1.15)}}
 .info{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}.info h3{font-size:1.2rem}.info small{color:var(--mute)}
 .buy{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px}.buy b{font-size:1.2rem;color:var(--blue)}.buy b small{font-weight:400}
